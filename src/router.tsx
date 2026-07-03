@@ -5,7 +5,8 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <h1>Formulário de Simulação</h1>,
+        element:
+          <h1>Formulário de Simulação</h1>
       },
       {
         path: '/resultado',
