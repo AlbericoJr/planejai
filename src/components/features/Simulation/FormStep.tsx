@@ -35,7 +35,7 @@ export function FormStep({
       </h3>
       <form className="flex flex-col gap-4">
         <Input {...inputProps} />
-        
+
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
           <Button
             type="button"
