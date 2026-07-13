@@ -4,7 +4,8 @@ import Button from '@/components/shared/Button'
 import { Input, type InputProps } from '@/components/shared/Input'
 
 
-interface FormStepProps {
+export interface FormStepProps {
+  id: string
   icon: LucideIcon
   title: string
   question: string
