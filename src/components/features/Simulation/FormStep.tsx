@@ -1,8 +1,9 @@
 import { ArrowLeft, ArrowRight, type LucideIcon } from "lucide-react"
-import { type SyntheticEvent,useState } from "react"
+import { type SyntheticEvent, useState } from "react"
 
 import Button from "@/components/shared/Button"
 import { Input, type InputProps } from "@/components/shared/Input"
+import { formatCurrencyMask } from "@/utils/currency"
 
 
 export interface FormStepProps {
@@ -73,12 +74,12 @@ export function FormStep({
             inputValue
           }
           onChange={(
-            e,
+            e
           ) =>
-            setInputValue(
-              e
+            setInputValue(inputProps.prefix == "R$" ? formatCurrencyMask
+              (e
                 .target
-                .value,
+                .value,) : e.target.value
             )
           }
         />
