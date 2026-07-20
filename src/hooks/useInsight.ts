@@ -8,7 +8,7 @@ import type { SimulationRecord } from "@/data/simulation"
 export const useInsight = (id: string) => {
   const isRequestPending = useRef(false)
   const { getFormData, updateSimulation } = useSimulationStorage()
-  
+
   const [insight, setInsight] = useState<InsightData | null>(() => {
   const simulation = getFormData(id)
 
@@ -20,7 +20,9 @@ export const useInsight = (id: string) => {
 })
 
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(
+    'Erro ao gerar o diagnóstico. Tente novamente.',
+  )
 
 
   const fetchInsight = useCallback(
