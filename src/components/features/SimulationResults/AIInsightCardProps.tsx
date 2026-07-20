@@ -1,14 +1,17 @@
 import 'react-loading-skeleton/dist/skeleton.css'
 
-import { useInsight } from "@/hooks/useInsight"
+import Skeleton from 'react-loading-skeleton'
+
+import { useInsight } from '@/hooks/useInsight'
+
+import { Content } from '../insights/Content'
+import { Error } from '../insights/Error'
+
 
 interface AIInsightCardProps {
   simulationId: string
 }
 
-import Skeleton from 'react-loading-skeleton'
-import { Error } from "../insights/Error"
-import { Content } from "../insights/Content"
 
 export function AIInsightsCard({ simulationId }: AIInsightCardProps) {
   const { insight, isLoading, error, fetchInsight } =
@@ -42,7 +45,7 @@ export function AIInsightsCard({ simulationId }: AIInsightCardProps) {
           onRetry={() => fetchInsight(simulationId)}
         />
       )}
-      {!isLoading && insight && !error && <Content />}
+      {!isLoading && insight && !error && <Content insight={insight} />}
     </div>
   )
 }
