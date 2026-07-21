@@ -8,7 +8,7 @@ Uma aplicação React + TypeScript desenvolvida com Vite para simulações finan
 
 ## Demo
 
-- **URL (local dev):** `http://localhost:5174/`
+- **URL (local dev):** `https://planejai-rosy.vercel.app/`
 - **Link da aplicação (produção):** _Adicione aqui o link do deploy_
 
 ---
