@@ -1,75 +1,141 @@
-# React + TypeScript + Vite
+# Planej.ai
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Uma aplicação React + TypeScript desenvolvida com Vite para simulações financeiras e insights personalizados por IA.
 
-Currently, two official plugins are available:
+> Este repositório contém o frontend da aplicação **Planej.ai** — um assistente de planejamento financeiro que gera simulações, calcula economia mensal e oferece insights acionáveis por IA.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **URL (local dev):** `http://localhost:5174/`
+- **Link da aplicação (produção):** _Adicione aqui o link do deploy_
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Capturas / Mockups
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+As imagens abaixo usam arquivos committed no repositório para que o `README` mostre as prévias corretamente.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Banner / Hero: `src/assets/Hero.png`
+- Tela de Simulação: `src/assets/simulação.png`
+- Tela de Histórico: `src/assets/Histórico.png`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+![Hero](src/assets/Hero.png)
+![Simulação](src/assets/simulação.png)
+![Histórico](src/assets/Histórico.png)
 
-```
+> Se preferir, você também pode usar placeholders em `src/assets/images/` como `hero-placeholder.svg`, `history-desktop.svg` e `insight-chat.svg`.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Principais funcionalidades
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Simulações completas:** entrada de dados de renda, despesas, dívidas e metas.
+- **Resumo financeiro:** cálculo automático de economia mensal e cartões com métricas chave.
+- **Insights por IA:** diagnóstico, sugestões práticas e mensagem motivacional.
+- **Chat contextual:** perguntas e respostas por simulação com histórico salvo no `localStorage`.
+- **Histórico de simulações:** visualização, exclusão e navegação para resultados anteriores.
 
-```
+---
+
+## Tecnologias
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Lucide Icons
+- Gemini / API de linguagem (via `VITE_GEMINI_API_KEY`)
+
+---
+
+## Como rodar localmente
+
+### Pré-requisitos
+
+- Node.js (LTS recomendado)
+- npm
+
+### Passos
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/AlbericoJr/planejai.git
+   cd planejai
+   ```
+2. Instale as dependências:
+   ```bash
+   npm ci
+   ```
+3. Crie um arquivo `.env` com a chave da API (opcional para testar IA):
+   ```env
+   VITE_GEMINI_API_KEY=your_api_key_here
+   ```
+4. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+5. Abra `http://localhost:5174/` no navegador.
+
+---
+
+## Scripts úteis
+
+- `npm run dev` — inicia o servidor de desenvolvimento com HMR.
+- `npm run build` — compila o projeto para produção.
+- `npm run preview` — pré-visualiza o build produzido.
+- `npm run lint` — executa o ESLint.
+- `npm run format` — formata o código com Prettier.
+
+---
+
+## Estrutura do projeto
+
+- `src/` — código-fonte principal
+  - `components/` — componentes React organizados por feature
+  - `pages/` — telas da aplicação
+  - `hooks/` — hooks customizados
+  - `services/` — integração com API de IA
+  - `data/` — tipos e templates de prompt
+  - `utils/` — utilitários
+- `public/` — assets estáticos
+- `src/assets/` — imagens usadas pelo app e pelo README
+
+---
+
+## Configurações importantes
+
+- `VITE_GEMINI_API_KEY` — chave para a API generativa. Mantenha essa chave fora do repositório.
+
+> Em produção, evite expor chaves sensíveis no cliente. Use um backend ou proxy para proteger a API.
+
+---
+
+## Testando o chat / IA
+
+1. Execute `npm run dev` e gere uma simulação.
+2. Acesse a página de resultados e aguarde o insight da IA.
+3. Use o campo de conversa no card de insight para enviar perguntas adicionais.
+4. O histórico de cada simulação é salvo no `localStorage`.
+
+---
+
+## Contribuição
+
+- Abra uma issue com sugestões ou bugs.
+- Faça um branch com `feat/` ou `fix/`.
+- Envie um pull request com descrição clara das alterações.
+
+---
+
+## Licença
+
+- MIT (ou ajuste para a licença desejada)
+
+---
+
+## Contato
+
+- Autor: `AlbericoJr`
+- Repo: `https://github.com/AlbericoJr/planejai`
