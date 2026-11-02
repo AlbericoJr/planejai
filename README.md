@@ -18,7 +18,7 @@ O **Planej.ai** é um projeto de planejamento financeiro pessoal. A partir de in
 
 O objetivo é tornar o planejamento de metas mais visual e acessível, enquanto o projeto explora construção de interfaces com React, tipagem com TypeScript, persistência local e integração com uma API generativa.
 
-> **Estado atual:** projeto frontend em evolução. A integração com a API Gemini é experimental e **ainda precisa ser migrada para um backend seguro** antes do uso com credenciais reais em produção.
+> **Estado atual:** projeto frontend em evolução. A integração com a API Gemini é experimental e **foi migrada para uma função serverless, mas ainda exige configuração e validação em produção** antes do uso com credenciais reais em produção.
 
 ## 🖥️ Demonstração e capturas
 
@@ -65,9 +65,9 @@ A estimativa **não equivale necessariamente ao dinheiro disponível para invest
 | Ferramentas | Vite 8, ESLint, Prettier |
 | Experiência visual | React Loading Skeleton |
 | Persistência | `localStorage` do navegador |
-| IA experimental | API Gemini via `fetch` |
+| IA experimental | API Gemini via função serverless Vercel (`api/gemini.js`) |
 
-**Arquitetura atual:** aplicação frontend; não há backend próprio para armazenar simulações ou intermediar de maneira segura as chamadas à IA.
+**Arquitetura atual:** frontend React com função serverless Vercel para intermediar chamadas à API Gemini. As simulações continuam armazenadas apenas no navegador.
 
 ## 🚀 Executando localmente
 
@@ -100,29 +100,27 @@ Abra a URL exibida no terminal, geralmente **http://localhost:5173/**. A porta p
 
 > **Importante:** as telas, o formulário e o histórico local podem ser explorados sem cadastrar uma chave de API. Nesse cenário, a geração de respostas por IA não funcionará corretamente e poderá exibir um erro de integração.
 
-### Configuração da IA: atenção à segurança
+### Configuração da IA e segurança
 
-A implementação atual em `src/services/aiService.ts` utiliza `import.meta.env.VITE_GEMINI_API_KEY` e envia requisições **diretamente do navegador** à API Gemini.
+A integração utiliza a função serverless `api/gemini.js`. O frontend faz requisições relativas a `/api/gemini`, sem receber a credencial do provedor.
 
-**Esse modelo não protege a chave.** Variáveis com prefixo `VITE_` utilizadas no frontend são incorporadas ao código entregue ao cliente durante o build. Deixar o arquivo `.env` fora do Git **não impede essa exposição**.
+1. Configure `GEMINI_API_KEY` **somente nas variáveis de ambiente do projeto na Vercel** (Development, Preview e Production conforme sua necessidade). **Não use prefixo `VITE_`**.
+2. Faça o deploy na Vercel. O endpoint `/api/gemini` será executado pelo servidor.
+3. Para testar a integração localmente, utilize o ambiente da Vercel com `vercel dev` e as variáveis locais apropriadas, em vez de apenas `npm run dev`. O `vite` isolado não disponibiliza a função serverless `/api/gemini`.
 
-Por isso, **não configure uma chave secreta real em um deploy público** com a arquitetura atual. Antes de habilitar a integração em produção, implemente uma API no servidor ou uma função serverless que:
+> **Importante:** nunca coloque uma chave real em arquivos com prefixo `VITE_`, no código-fonte ou em commits. Se uma chave já esteve disponível no JavaScript servido ao navegador, **revogue-a e gere outra**.
 
-1. Armazene a chave em uma variável de ambiente **exclusiva do servidor**, sem prefixo `VITE_`.
-2. Receba e valide as solicitações da aplicação.
-3. Faça a chamada ao provedor de IA no servidor.
-4. Aplique limites de requisição, tratamento de erros e medidas contra abuso.
-5. Retorne ao frontend apenas os dados necessários à interface.
+O endpoint possui verificação de origem, validação simples de tamanho de mensagens e limitação básica em memória. **A limitação em memória não é uma proteção robusta entre múltiplas instâncias serverless:** antes de abrir a aplicação ao público em escala, configure limite centralizado por IP/usuário, verificação de identidade quando aplicável, cotas de uso e monitoramento de custos. O endpoint recebe informações financeiras declaradas nas simulações; não insira dados pessoais sensíveis.
 
-Referência: [documentação oficial de variáveis de ambiente do Vite](https://vite.dev/guide/env-and-mode).
+Para desenvolver somente a interface, use `npm run dev`. A geração de insights pode retornar um erro quando a API serverless não estiver disponível.
 
-**Se uma chave real já foi utilizada no frontend publicado, considere-a exposta: revogue ou substitua a credencial e revise seu uso no provedor.**
+Referência: [documentação de variáveis de ambiente do Vite](https://vite.dev/guide/env-and-mode).
 
 ## 📁 Organização do projeto
 
 ```text
 planejai/
-├── public/                # Arquivos públicos
+├── api/gemini.js         # Proxy serverless de IA (Vercel)\n├── public/                # Arquivos públicos
 ├── src/
 │   ├── assets/            # Imagens e recursos visuais
 │   ├── components/        # Componentes e funcionalidades de interface
@@ -130,7 +128,7 @@ planejai/
 │   ├── data/              # Estruturas de dados e prompts de IA
 │   ├── hooks/             # Estado e persistência das simulações
 │   ├── pages/             # Formulário, resultados e histórico
-│   ├── services/          # Integração atual com a API Gemini
+│   ├── services/          # Cliente HTTP para o endpoint /api/gemini
 │   ├── styles/            # Estilos adicionais
 │   ├── utils/             # Cálculos e formatação
 │   ├── App.tsx
@@ -166,7 +164,7 @@ O repositório **ainda não possui um script de testes automatizados** configura
 - **Dados armazenados no navegador:** simulações e conversas ficam no `localStorage` do dispositivo, sem conta de usuário e sem sincronização entre dispositivos.
 - **Persistência limitada:** limpar os dados do navegador ou usar outro navegador/dispositivo pode eliminar o acesso ao histórico.
 - **Envio de dados à IA:** quando a integração é acionada, informações financeiras fornecidas na simulação e trechos da conversa são enviados ao serviço Gemini para geração de respostas.
-- **Chave da API no frontend:** a arquitetura atual não fornece proteção adequada para uma credencial secreta. A migração para backend é uma prioridade.
+- **Chave protegida no servidor:** o código React não utiliza mais uma variável \`VITE_GEMINI_API_KEY\`; ainda é necessário configurar \`GEMINI_API_KEY\` na Vercel e revogar credenciais antigas expostas.
 - **Resultados estimados:** os cálculos dependem das informações cadastradas, e respostas da IA podem conter imprecisões.
 - **Sem recomendação financeira profissional:** o Planej.ai é um projeto educacional e demonstrativo, não uma plataforma de consultoria financeira ou aconselhamento de investimentos.
 
@@ -174,7 +172,7 @@ Evite inserir informações financeiras sensíveis ou identificadores pessoais r
 
 ## 🗺️ Próximos passos
 
-- [ ] Migrar a integração Gemini para uma função serverless ou backend protegido.
+- [x] Migrar as chamadas Gemini para uma função serverless (configuração da chave na Vercel ainda necessária).\n- [ ] Implantar rate limiting centralizado e controles contra abuso.
 - [ ] Adicionar validação dos dados de entrada e da estrutura de respostas da IA.
 - [ ] Corrigir a nomenclatura da sobra mensal e aprimorar os cálculos considerando mais despesas.
 - [ ] Implementar testes unitários e de fluxo para simulações, histórico e integração de IA.
