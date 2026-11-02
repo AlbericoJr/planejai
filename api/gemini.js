@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   const expectedHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim()
   const origin = req.headers.origin
   // Requisições entre origens diferentes não são permitidas neste endpoint.
-  if (!origin || !expectedHost || new URLSafeHost(origin) !== expectedHost) {
+  if (!origin || !expectedHost || URLSafeHost(origin) !== expectedHost) {
     return res.status(403).json({ error: 'Origem não autorizada.' })
   }
 
